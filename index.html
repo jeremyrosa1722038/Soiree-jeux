@@ -104,9 +104,9 @@ input,select{font:inherit}
 .lz.minus span{left:14px} .lz.plus span{right:14px}
 .lv{position:absolute;left:0;right:0;top:50%;text-align:center;font-weight:900;line-height:1;pointer-events:none;font-variant-numeric:tabular-nums;
   -webkit-transform:translateY(-50%);transform:translateY(-50%)}
-.lname{position:absolute;top:10px;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);max-width:70%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+.lname{position:absolute;bottom:12px;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);max-width:70%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   padding:4px 12px;border-radius:999px;background:rgba(0,0,0,.14);font-weight:800;font-size:15px;z-index:2;color:inherit}
-.ldelta{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-weight:900;font-size:24px;opacity:0;transition:opacity .3s;pointer-events:none}
+.ldelta{position:absolute;top:34px;left:0;right:0;text-align:center;font-weight:900;font-size:24px;opacity:0;transition:opacity .3s;pointer-events:none}
 .ldelta.on{opacity:1}
 .lbar{position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);z-index:4;display:flex}
 #lset{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(7,5,26,.86);z-index:6;display:none;overflow:auto;-webkit-overflow-scrolling:touch;
@@ -163,7 +163,7 @@ input,select{font:inherit}
 .rules ol{padding-left:20px;margin:6px 0}
 .wordlist{display:grid;grid-template-columns:1fr 1fr;grid-gap:8px;max-height:52vh;overflow:auto;-webkit-overflow-scrolling:touch;padding:2px}
 @media(min-width:560px){.wordlist{grid-template-columns:1fr 1fr 1fr}}
-.wordlist button{background:var(--card);color:var(--ink);border-radius:12px;padding:12px 8px;font-weight:800;font-size:16px;text-transform:capitalize;position:relative}
+.wordlist button{background:var(--card);color:var(--ink);border-radius:12px;padding:12px 8px;font-weight:800;font-size:16px;position:relative}
 .wordlist button:after{content:"↻";position:absolute;top:3px;right:7px;font-size:12px;opacity:.35}
 .wordlist button.swap{animation:pop .3s}
 @keyframes pop{50%{transform:scale(.85);background:var(--yellow)}}
@@ -191,7 +191,7 @@ input,select{font:inherit}
 .sand{display:block;margin:0 auto}
 .wordcard{background:var(--card);color:var(--ink);border-radius:28px;min-height:230px;margin:16px 0;display:flex;flex-direction:column;
   align-items:center;justify-content:center;padding:24px 18px;text-align:center;box-shadow:0 10px 0 #d9cfb6,0 18px 30px rgba(0,0,0,.35);position:relative}
-.wordcard .w{font-size:46px;font-weight:900;text-transform:capitalize;word-break:break-word;line-height:1.1}
+.wordcard .w{font-size:46px;font-weight:900;word-break:break-word;line-height:1.1}
 .wordcard .hint{position:absolute;top:14px;left:0;right:0;font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#9a92c4}
 .wordcard.in{animation:cardin .25s ease-out}
 @keyframes cardin{from{transform:translateX(60px) rotate(6deg);opacity:0}to{transform:none;opacity:1}}
@@ -206,7 +206,7 @@ input,select{font:inherit}
 .flash.ko{background:rgba(255,107,107,.35);animation:fl .35s}
 @keyframes fl{0%{opacity:1}100%{opacity:0}}
 .found{display:flex;flex-wrap:wrap;margin:-4px;justify-content:center}
-.found span{margin:4px;padding:8px 12px;border-radius:12px;background:var(--mint);color:var(--ink);font-weight:800;text-transform:capitalize}
+.found span{margin:4px;padding:8px 12px;border-radius:12px;background:var(--mint);color:var(--ink);font-weight:800}
 .found span.miss{background:#1b1640;color:var(--muted)}
 .found span.tap{cursor:pointer}
 .confetti{position:fixed;top:-20px;width:10px;height:14px;z-index:9;pointer-events:none;animation:fall linear forwards}
@@ -436,6 +436,7 @@ function rnd(n){ // aléatoire de qualité si possible
   if(window.crypto&&crypto.getRandomValues){var b=new Uint32Array(1);crypto.getRandomValues(b);return b[0]%n}
   return Math.floor(Math.random()*n);
 }
+function cap(w){w=String(w);return w.charAt(0).toUpperCase()+w.slice(1)}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 
 /* ---------- Audio ---------- */
@@ -574,12 +575,12 @@ function prepareCards(){
   renderWordlist(); go('s-cards'); ac();
 }
 function renderWordlist(){
-  var h=''; for(var i=0;i<chosen.length;i++) h+='<button data-i="'+i+'">'+esc(chosen[i])+'</button>';
+  var h=''; for(var i=0;i<chosen.length;i++) h+='<button data-i="'+i+'">'+esc(cap(chosen[i]))+'</button>';
   $('wordlist').innerHTML=h;
 }
 $('wordlist').onclick=function(e){
   var i=e.target.getAttribute('data-i'); if(i===null) return; i=+i;
-  chosen[i]=drawWord(chosen); e.target.textContent=chosen[i];
+  chosen[i]=drawWord(chosen); e.target.textContent=cap(chosen[i]);
   e.target.classList.remove('swap'); void e.target.offsetWidth; e.target.classList.add('swap');
 };
 
@@ -644,7 +645,7 @@ function tick(){
 function nextCard(){
   if(!G.deck.length){ endTurn(false); return; }
   G.current=G.deck.shift();
-  $('word').textContent=G.current;
+  $('word').textContent=cap(G.current);
   $('wordhint').textContent=ROUNDS[G.round].short;
   $('deckLeft').textContent=G.deck.length+1;
   var c=$('wordcard'); c.classList.remove('in'); void c.offsetWidth; c.classList.add('in');
@@ -681,7 +682,7 @@ function renderTurnEnd(){
   $('endTitle').textContent = G.lastTimeout ? 'Temps écoulé !' : 'Plus de cartes !';
   var n=G.turnFound.length;
   $('endSub').innerHTML='<b>'+esc(cfg.teams[G.team].name)+'</b> marque <b style="color:var(--mint)">'+n+' point'+(n>1?'s':'')+'</b>';
-  $('endFound').innerHTML = n ? G.turnFound.map(function(w,i){return '<span class="tap" data-i="'+i+'">'+esc(w)+'</span>'}).join('') : '<span class="miss">Aucune carte trouvée</span>';
+  $('endFound').innerHTML = n ? G.turnFound.map(function(w,i){return '<span class="tap" data-i="'+i+'">'+esc(cap(w))+'</span>'}).join('') : '<span class="miss">Aucune carte trouvée</span>';
   $('endNext').textContent = G.deck.length ? 'Équipe suivante' : (G.round<2?'Voir les scores de la manche':'Résultats finaux');
 }
 $('endFound').onclick=function(e){
